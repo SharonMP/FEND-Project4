@@ -8,6 +8,3 @@ import './styles/header.scss'
 import './styles/resets.scss'
 
 console.log(checkForName);
-
-alert("I EXIST")
-console.log("CHANGE!!");
