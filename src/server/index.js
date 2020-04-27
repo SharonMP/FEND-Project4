@@ -13,6 +13,12 @@ console.log(__dirname)
 
 var aylien = require("aylien_textapi");
 
+/* Middleware*/
+//Here we are configuring express to use body-parser as middle-ware.
+const bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 console.log(`Your API key is ${process.env.API_KEY}`);
 const textapi = new aylien({
 application_id: process.env.API_ID,
@@ -44,5 +50,23 @@ let server = app.listen(8080, function () {
 app.get('/test', function (req, res) {
     res.send(mockAPIResponse)
 })
+
+// POST route
+app.post('/sentiment', callAylien);
+function callAylien(request, response) {
+  console.log('inside callMyAlient');
+  const body = request.body;
+  console.log('request.body: ' + JSON.stringify(body));
+  console.log('text: ' + body.text);
+
+  const result = textapi.sentiment({
+    'text': body.text
+  }, function(error, response) {
+    if (error === null) {
+      console.log(response);
+    }
+  });
+  console.log('result: ' + result);
+}
 
 module.exports = server
