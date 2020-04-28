@@ -23,6 +23,15 @@ module.exports = {
         new HtmlWebPackPlugin({
             template: "./src/client/views/index.html",
             filename: "./index.html",
+        }),
+        new workboxPlugin.GenerateSW({
+            swDest: 'sw.js',
+            clientsClaim: true,
+            skipWaiting: true,
+            runtimeCaching: [{
+                urlPattern: new RegExp('https://hacker-news.firebaseio.com'),
+                handler: 'StaleWhileRevalidate'
+              }]
         })
     ]
 }

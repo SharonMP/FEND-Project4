@@ -19,6 +19,7 @@ Gives practice with:
 
 ## References
 * Udacity course material and forum posts
+* Various StackOverflow Q&A
 * https://docs.aylien.com/textapi/sdks/#node-js-sdk
 * https://webpack.js.org/guides/installation/
 * https://developers.google.com/web/tools/workbox/guides/codelabs/webpack
