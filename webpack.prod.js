@@ -26,12 +26,10 @@ module.exports = {
         }),
         new workboxPlugin.GenerateSW({
             swDest: 'sw.js',
-            clientsClaim: true,
-            skipWaiting: true,
             runtimeCaching: [{
-                urlPattern: new RegExp('https://hacker-news.firebaseio.com'),
+                urlPattern: new RegExp('^https?:\/\/[a-zA-Z0-9-]+.[a-zA-Z0-9-]+.?[a-zA-Z0-9-]*\/*[a-zA-Z0-9-]*$'),
                 handler: 'StaleWhileRevalidate'
-              }]
+            }]
         })
     ]
 }
