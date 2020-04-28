@@ -19,7 +19,6 @@ function validateFormInput(url) {
   const pattern = new RegExp('^https?:\/\/[a-zA-Z0-9]+.[a-zA-Z0-9]+.[a-zA-Z0-9]+\/[a-zA-Z0-9-]+$');
 
   if (url.length <= 0) {
-    console.log("Empty input provided. Please enter a URL");
     return formInputValidationReasonCode.EMPTY;
   }
 
@@ -47,12 +46,16 @@ const getSummary = async(localUrl, apiUrl) => {
 
     return response;
   } catch(error) {
-    console.log("Error: ", error);
+    markUIWithError('There was an unexpected error with summarizing the text');
   }
 }
 
 // Call local server to post the results
 const postData = async(url, data) => {
+
+  if (data === "ERROR") {
+    return "ERROR";
+  }
   const response = await fetch(url, {
     method: 'POST',
     credentials: 'same-origin',
@@ -67,40 +70,65 @@ const postData = async(url, data) => {
 
     return response;
   } catch(error) {
-    console.log("Error: ", error);
+    console.log("Error in postData: ", error);
   }
 }
 
 // Call local server to get the results and render on page
-const updateUI = async() => {
+const updateUI = async(data) => {
   try {
+
+    if (data === "ERROR") {
+      markUIWithError('There was an unexpected error with summarizing the text');
+      return;
+    }
     const request = await fetch('/all');
     const response = await request.json();
 
-    document.getElementById('results').innerHTML = 'Summary: ' + response.sentences;
+    if (typeof(response) !== 'undefined') {
+      document.getElementById('results').innerHTML = 'Summary: ' + response.sentences;
+    } else {
+      markUIWithError('There was an unexpected error with summarizing the text');
+      return;
+    }
   } catch(error) {
-    console.log("Error: ", error);
+    console.log("Error in updateUI: ", error);
+    markUIWithError('There was an unexpected error with summarizing the text');
+    return;
   }
+}
+
+function markUIWithError(message) {
+  const inputElement = document.getElementById('name');
+  inputElement.style.backgroundColor = 'red';
+  document.getElementById('results').innerHTML = message;
 }
 
 // Button handler that chains a series of Promises (async calls) using `then`
 function performAction(event) {
   event.preventDefault();
-  const url = document.getElementById('name').value;
+  const inputElement =  document.getElementById('name');
+  const url = inputElement.value;
 
   const validationResult = validateFormInput(url);
-  if (!validationResult) {
-    // Update form to indicate error
-    console.log('validation failed');
+  if (validationResult === formInputValidationReasonCode.URL_PARSE_ERROR) {
+    markUIWithError('URL is not valid');
+  } else if (validationResult === formInputValidationReasonCode.EMPTY) {
+    markUIWithError('Blank URL is not allowed');
   } else {
     getSummary('/summarize', {url: url})
     .then(function(data) {
+      if (typeof(data) !== 'undefined') {
         const sentencesCollection = data.sentences;
         const sentences = sentencesCollection.join(' ');
         postData('/add', {sentences: sentences});
+      } else {
+        markUIWithError('There was an unexpected error with summarizing the text');
+        return "ERROR";
+      }
     })
-    .then(function() {
-      return updateUI();
+    .then(function(data) {
+      return updateUI(data);
     });
   }
 }

@@ -54,7 +54,6 @@ function addSummaryData(request, response) {
 app.post('/summarize', callAylien);
 function callAylien(request, response) {
   const body = request.body;
-//  const result = "abc";
 
   textapi.summarize({
     url: body.url,
@@ -63,7 +62,8 @@ function callAylien(request, response) {
     if (error === null) {
       response.send(responseSummary);
     } else {
-      console.log("ERROR"); // To show on UI
+      console.log("ERROR in callAylien");
+      response.send("ERROR");
     }
   });
 }
