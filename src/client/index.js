@@ -8,5 +8,7 @@ import './styles/resets.scss'
 
 // Using event listener per mentor advice at https://knowledge.udacity.com/questions/82043
 // Accepts both keypress and button clicks.
-const form = document.getElementById('form');
-form.addEventListener('submit', handleSubmit);
+const form = global.document.getElementById('form');
+if (!!form) {
+  form.addEventListener('submit', handleSubmit);
+}
