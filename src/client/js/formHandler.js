@@ -6,8 +6,7 @@ const formInputValidationReasonCode = {
 
 function validateFormInput(url) {
   // Pattern: http|https:www.example.com
-  // TODO: Test
-  const pattern = new RegExp('^https?:\/\/[a-zA-Z0-9]+.[a-zA-Z0-9]+.[a-zA-Z0-9]+\/[a-zA-Z0-9-]+$');
+  const pattern = new RegExp('^https?:\/\/[a-zA-Z0-9-]+.[a-zA-Z0-9-]+.?[a-zA-Z0-9-]*\/*[a-zA-Z0-9-]*$');
 
   if (url.length <= 0) {
     return formInputValidationReasonCode.EMPTY;
@@ -77,6 +76,7 @@ const updateUI = async(data) => {
     const response = await request.json();
 
     if (typeof(response) !== 'undefined') {
+      updateInputBackgroundColor("");
       document.getElementById('results').innerHTML = 'Summary: ' + response.sentences;
     } else {
       markUIWithError('There was an unexpected error with summarizing the text');
@@ -89,9 +89,13 @@ const updateUI = async(data) => {
   }
 }
 
-function markUIWithError(message) {
+function updateInputBackgroundColor(color) {
   const inputElement = document.getElementById('name');
-  inputElement.style.backgroundColor = 'red';
+  inputElement.style.backgroundColor = color;
+}
+
+function markUIWithError(message) {
+  updateInputBackgroundColor('red');
   document.getElementById('results').innerHTML = message;
 }
 
@@ -124,4 +128,4 @@ function handleSubmit(event) {
   }
 }
 
-export { handleSubmit }
+export { handleSubmit, validateFormInput }
