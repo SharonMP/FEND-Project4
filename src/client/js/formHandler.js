@@ -72,7 +72,7 @@ const updateUI = async(data) => {
       markUIWithError('There was an unexpected error with summarizing the text');
       return;
     }
-    const request = await fetch('/all');
+    const request = await fetch('http://localhost:8080/all');
     const response = await request.json();
 
     if (typeof(response) !== 'undefined') {
@@ -111,12 +111,12 @@ function handleSubmit(event) {
   } else if (validationResult === formInputValidationReasonCode.EMPTY) {
     markUIWithError('Blank URL is not allowed');
   } else {
-    getSummary('/summarize', {url: url})
+    getSummary('http://localhost:8080/summarize', {url: url})
     .then(function(data) {
       if (typeof(data) !== 'undefined') {
         const sentencesCollection = data.sentences;
         const sentences = sentencesCollection.join(' ');
-        postData('/add', {sentences: sentences});
+        postData('http://localhost:8080/add', {sentences: sentences});
       } else {
         markUIWithError('There was an unexpected error with summarizing the text');
         return "ERROR";
