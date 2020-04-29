@@ -31,8 +31,8 @@ app.get('/', function (req, res) {
 })
 
 // designates what port the app will listen to for incoming requests
-let server = app.listen(8080, function () {
-    console.log('Example app listening on port 8080!')
+let server = app.listen(8081, function () {
+    console.log('Example app listening on port 8081!')
 })
 
 app.get('/test', function (req, res) {
@@ -49,12 +49,12 @@ function sendData(request, response) {
 app.post('/add', addSummaryData);
 function addSummaryData(request, response) {
   const body = request.body;
-  projectData = {sentences: body.sentences};
+  projectData = {polarity: body.polarity, subjectivity: body.subjectivity, text: body.text};
 }
 
 // POST route
-app.post('/summarize', callAylien);
-function callAylien(request, response) {
+app.post('/summarize', callAylienSummarize);
+function callAylienSummarize(request, response) {
   const body = request.body;
 
   textapi.summarize({
@@ -64,7 +64,24 @@ function callAylien(request, response) {
     if (error === null) {
       response.send(responseSummary);
     } else {
-      console.log("ERROR in callAylien");
+      console.log("ERROR in callAylienSummarize");
+      response.send("ERROR");
+    }
+  });
+}
+
+// POST route
+app.post('/sentiment', callAylienSentiment);
+function callAylienSentiment(request, response) {
+  const body = request.body;
+
+  textapi.sentiment({
+    url: body.url
+  }, function(error, responseSentiment) {
+    if (error === null) {
+      response.send(responseSentiment);
+    } else {
+      console.log("ERROR in callAylienSentiment");
       response.send("ERROR");
     }
   });

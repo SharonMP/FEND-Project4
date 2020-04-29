@@ -6,7 +6,7 @@ const formInputValidationReasonCode = {
 
 function validateFormInput(url) {
   // Pattern: http|https:www.example.com
-  const pattern = new RegExp('^https?:\/\/[a-zA-Z0-9-]+.[a-zA-Z0-9-]+.?[a-zA-Z0-9-]*\/*[a-zA-Z0-9-]*$');
+  const pattern = new RegExp('^https?:\/\/[a-zA-Z0-9-]+.[a-zA-Z0-9-]+.?[a-zA-Z0-9-]*[\/*[a-zA-Z0-9-]*\/*]*$');
 
   if (url.length <= 0) {
     return formInputValidationReasonCode.EMPTY;
@@ -72,12 +72,14 @@ const updateUI = async(data) => {
       markUIWithError('There was an unexpected error with summarizing the text');
       return;
     }
-    const request = await fetch('http://localhost:8080/all');
+    const request = await fetch('http://localhost:8081/all');
     const response = await request.json();
 
     if (typeof(response) !== 'undefined') {
       updateInputBackgroundColor("");
-      document.getElementById('results').innerHTML = 'Summary: ' + response.sentences;
+      document.getElementById('results').innerHTML = 'Polarity:' + response.polarity
+      + '<br/>' +  'Subjectivity: ' + response.subjectivity
+      + '<br/>' + 'Text: ' + response.text;
     } else {
       markUIWithError('There was an unexpected error with summarizing the text');
       return;
@@ -111,12 +113,10 @@ function handleSubmit(event) {
   } else if (validationResult === formInputValidationReasonCode.EMPTY) {
     markUIWithError('Blank URL is not allowed');
   } else {
-    getSummary('http://localhost:8080/summarize', {url: url})
+    getSummary('http://localhost:8081/sentiment', {url: url})
     .then(function(data) {
       if (typeof(data) !== 'undefined') {
-        const sentencesCollection = data.sentences;
-        const sentences = sentencesCollection.join(' ');
-        postData('http://localhost:8080/add', {sentences: sentences});
+        postData('http://localhost:8081/add', {polarity: data.polarity, subjectivity: data.subjectivity, text: data.text});
       } else {
         markUIWithError('There was an unexpected error with summarizing the text');
         return "ERROR";

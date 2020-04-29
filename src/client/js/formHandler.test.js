@@ -19,3 +19,7 @@ test('Test input validation ok - only base', () => {
 test('Test input validation ok - no www', () => {
   expect(validateFormInput('https://learn-js.org/')).toBe('ok');
 });
+
+test('Test input validation ok - no www', () => {
+  expect(validateFormInput('https://www.healthline.com/nutrition/10-proven-benefits-of-cinnamon')).toBe('ok');
+});

@@ -27,7 +27,7 @@ module.exports = {
         new workboxPlugin.GenerateSW({
             swDest: 'sw.js',
             runtimeCaching: [{
-                urlPattern: new RegExp('^https?:\/\/[a-zA-Z0-9-]+.[a-zA-Z0-9-]+.?[a-zA-Z0-9-]*\/*[a-zA-Z0-9-]*$'),
+                urlPattern: new RegExp('^https?:\/\/[a-zA-Z0-9-]+.[a-zA-Z0-9-]+.?[a-zA-Z0-9-]*[\/*[a-zA-Z0-9-]*\/*]*$'),
                 handler: 'StaleWhileRevalidate'
             }]
         })
